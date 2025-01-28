@@ -6,5 +6,6 @@ from tickets import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    #model And No Rest Framework
     path('ModelNoRest/',views.FBVModelNoRest),
 ]
