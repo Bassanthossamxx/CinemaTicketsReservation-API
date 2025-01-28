@@ -12,7 +12,7 @@ class MovieSerializer(serializers.ModelSerializer):
         fields='__all__'
 
 class ReservationSerializer(serializers.ModelSerializer):
-
+    #choosen needed fields to endpoint it
     class Meta:
         model = Reservation
         fields = ['id', 'guest', 'movie']

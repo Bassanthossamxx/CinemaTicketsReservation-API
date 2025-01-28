@@ -5,10 +5,15 @@ from .models import *
 
 #Function based view model and no rest framework:
 def FBVModelNoRest(request):
-    data = Guest.objects.all()
+    dataGuest = Guest.objects.all()
+    #dataReservation = Reservation.objects.all()
+    #dataMovie = Movie.objects.all()
     response = \
         {
-        'guests': list(data.values())  # Convert to list
+        'guests': list(dataGuest.values()) ,
+            #if I need to change it "practise"
+        # 'movies' : list(dataMovie.values()),
+        # 'reservations' : list(dataReservation.values())  ,
         }
     return JsonResponse(response)
 
