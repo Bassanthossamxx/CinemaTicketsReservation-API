@@ -36,6 +36,16 @@ def FBVModelNoRest(request):
 
     return JsonResponse(response)  # No need to set safe=False unless needed
 
+#ORM :
+#list and create same view
+# List == GET
+# Create == POST
+#pk query & update & delete same view
+# pk query == GET >> using ID
+# Update == PUT
+# Delete destroy == DELETE
+
+
 
 
 
