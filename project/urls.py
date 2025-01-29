@@ -9,6 +9,8 @@ urlpatterns = \
     #model And No Rest Framework
     path('UsingModelNoRest/',views.FBV_Model_No_Rest),
     #FBVs & Rest Framework
-    path('rest/guests/',views.FBV_Get_Post_Guest), #Get and Post
-    path('rest/guest/<int:pk>/' , views.FBV_Get_Put_Delete_Guest) #delete , update , get using ID
+    path('rest/guests/',views.FBV_List_Guest), #Get and Post for guests
+    path('rest/movies/',views.FBV_List_Movie), #Get and Post for movies
+    path('rest/reservations/',views.FBV_List_Reservation), #Get and Post for reservations
+    path('rest/guest/<int:pk>/', views.FBV_PK_Guest),  # delete , update , get using ID for guests
     ]

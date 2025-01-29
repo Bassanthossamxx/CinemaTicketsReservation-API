@@ -18,6 +18,6 @@ class Guest(models.Model):
 class Reservation(models.Model):
     guest = models.ForeignKey(Guest, related_name='reservation',on_delete=models.CASCADE)
     movie = models.ForeignKey(Movie, related_name='reservation' ,on_delete=models.CASCADE)
-    time = models.TimeField()
-    price = models.IntegerField()
-    payment_method = models.CharField(max_length=20)
+    time = models.TimeField( null=True)
+    price = models.IntegerField(null=True)
+    payment_method = models.CharField(max_length=20 , null=True)

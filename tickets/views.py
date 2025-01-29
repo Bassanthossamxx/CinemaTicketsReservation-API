@@ -1,10 +1,12 @@
+from http.client import responses
+
 from django.http import JsonResponse
 from django.shortcuts import render
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 from .models import *
-from .serializers import GuestSerializer
+from .serializers import GuestSerializer, MovieSerializer, ReservationSerializer
 
 
 def FBV_Model_No_Rest(request):
@@ -14,9 +16,9 @@ def FBV_Model_No_Rest(request):
     }
     return JsonResponse(response)
 
-
+#1- GET / POST For Guest
 @api_view(['GET', 'POST'])
-def FBV_Get_Post_Guest(request):
+def FBV_List_Guest(request):
     if request.method == 'GET':
         guests = Guest.objects.all()
         serializer = GuestSerializer(guests, many=True)
@@ -28,9 +30,44 @@ def FBV_Get_Post_Guest(request):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+#2- GET / POST For Movies
+@api_view(['GET','POST'])
+def FBV_List_Movie(request):
+    if request.method == 'GET':
+        movie = Movie.objects.all()
+        response = MovieSerializer(movie, many = True)
+        return Response(response.data , status = status.HTTP_200_OK)
+    elif request.method == 'POST':
+        serializer = MovieSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data , status = status.HTTP_200_OK)
+        return Response(serializer.errors , status = status.HTTP_400_BAD_REQUEST)
 
+
+#3- GET / POST For Reservation
+@api_view(['GET', 'POST'])
+def FBV_List_Reservation(request):
+    if request.method == 'GET':
+        reservations = Reservation.objects.all()
+        serializer = ReservationSerializer(reservations, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    elif request.method == 'POST':
+        serializer = ReservationSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
+
+
+#4- GET "PK" / PUT / DELETE For Guest
 @api_view(['GET', 'PUT', 'DELETE'])
-def FBV_Get_Put_Delete_Guest(request, pk):
+def FBV_PK_Guest(request, pk):
     try:
         guest = Guest.objects.get(pk=pk)
     except Guest.DoesNotExist:
