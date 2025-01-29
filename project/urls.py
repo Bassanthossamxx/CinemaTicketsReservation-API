@@ -13,4 +13,5 @@ urlpatterns = \
     path('rest/movies/',views.FBV_List_Movie), #Get and Post for movies
     path('rest/reservations/',views.FBV_List_Reservation), #Get and Post for reservations
     path('rest/guest/<int:pk>/', views.FBV_PK_Guest),  # delete , update , get using ID for guests
+path('rest/movie/<int:pk>/', views.FBV_PK_Movie),  # delete , update , get using ID for movie
     ]

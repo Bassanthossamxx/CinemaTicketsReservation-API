@@ -35,8 +35,8 @@ def FBV_List_Guest(request):
 def FBV_List_Movie(request):
     if request.method == 'GET':
         movie = Movie.objects.all()
-        response = MovieSerializer(movie, many = True)
-        return Response(response.data , status = status.HTTP_200_OK)
+        serializer = MovieSerializer(movie, many = True)
+        return Response(serializer.data , status = status.HTTP_200_OK)
     elif request.method == 'POST':
         serializer = MovieSerializer(data=request.data)
         if serializer.is_valid():
@@ -59,10 +59,6 @@ def FBV_List_Reservation(request):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-
-
 
 
 #4- GET "PK" / PUT / DELETE For Guest
@@ -89,3 +85,24 @@ def FBV_PK_Guest(request, pk):
         guests = Guest.objects.all()
         serializer = GuestSerializer(guests, many=True)
         return Response(serializer.data, status=status.HTTP_204_NO_CONTENT)
+
+
+#5- GET "PK" / PUT / DELETE For Movie
+@api_view(['GET', 'PUT', 'DELETE'])
+def FBV_PK_Movie(request,pk):
+    try:
+       movie = Movie.objects.get(pk=pk)
+    except Movie.DoesNotExist:
+       return Response(status=status.HTTP_404_NOT_FOUND)
+    if request.method == 'GET':
+        serializer = MovieSerializer(movie)
+        return Response(serializer.data ,status = status.HTTP_200_OK)
+    elif request.method == 'PUT':
+        serializer = MovieSerializer(movie, data= request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data,status=status.HTTP_200_OK)
+        return Response(serializer.errors , status = status.HTTP_400_BAD_REQUEST)
+    elif request.method == 'DELETE':
+        movie.delete()
+        return Response({"message":"Movie Has Been Deleted"} , status = status.HTTP_200_OK)
