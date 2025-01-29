@@ -106,3 +106,23 @@ def FBV_PK_Movie(request,pk):
     elif request.method == 'DELETE':
         movie.delete()
         return Response({"message":"Movie Has Been Deleted"} , status = status.HTTP_200_OK)
+
+#6- GET "PK" / PUT / DELETE For Reservation
+@api_view(['GET', 'PUT', 'DELETE'])
+def FBV_PK_Reservation(request,pk):
+    try:
+       reservation = Reservation.objects.get(pk=pk)
+    except Reservation.DoesNotExist:
+       return Response(status=status.HTTP_404_NOT_FOUND)
+    if request.method == 'GET':
+        serializer = ReservationSerializer(reservation)
+        return Response(serializer.data ,status = status.HTTP_200_OK)
+    elif request.method == 'PUT':
+        serializer = ReservationSerializer(reservation, data= request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data,status=status.HTTP_200_OK)
+        return Response(serializer.errors , status = status.HTTP_400_BAD_REQUEST)
+    elif request.method == 'DELETE':
+        reservation.delete()
+        return Response({"message":"reservation Has Been Deleted"} , status = status.HTTP_200_OK)
