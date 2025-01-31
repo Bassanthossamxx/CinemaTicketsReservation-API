@@ -127,15 +127,17 @@ def FBV_PK_Reservation(request,pk):
         reservation.delete()
         return Response({"message":"reservation Has Been Deleted"} , status = status.HTTP_200_OK)
 
-
+#7- GET "PK"  For Filtering Reservations Of Same movie/guest
 @api_view(['GET'])
 def FBV_Filter(request , pk):
-  #need to find from reservation all reservation with same movie id
+  #all reservation with same movie id
   reservation = Reservation.objects.filter(movie=pk)
   serializer = ReservationSerializer(reservation , many=True)
   #same guest reservation
   # reservation = Reservation.objects.filter(guest=pk)
   # serializer = ReservationSerializer(reservation, many=True)
+  if not reservation.exists():
+      return Response({"message": "No reservations found"}, status=status.HTTP_404_NOT_FOUND)
   return Response(serializer.data , status=status.HTTP_200_OK)
 
 
