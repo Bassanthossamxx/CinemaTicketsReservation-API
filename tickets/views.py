@@ -9,7 +9,7 @@ from .models import *
 from .serializers import GuestSerializer, MovieSerializer, ReservationSerializer
 
 
-def FBV_Model_No_Rest(request):
+def FBV_Model_No_Rest():
     guest = Guest.objects.all()
     response = {
         'guests': list(guest.values()),
@@ -129,7 +129,7 @@ def FBV_PK_Reservation(request,pk):
 
 #7- GET "PK"  For Filtering Reservations Of Same movie/guest
 @api_view(['GET'])
-def FBV_Filter(request , pk):
+def FBV_Filter(pk):
   #all reservation with same movie id
   reservation = Reservation.objects.filter(movie=pk)
   serializer = ReservationSerializer(reservation , many=True)

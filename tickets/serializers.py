@@ -3,8 +3,8 @@ from rest_framework import serializers
 
 class GuestSerializer(serializers.ModelSerializer):
     class Meta:
-        model=Guest
-        fields='__all__'
+        model = Guest
+        fields = ['id', 'name', 'Phone', 'reservation']
 
 class MovieSerializer(serializers.ModelSerializer):
     class Meta:
