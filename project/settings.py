@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'tickets',
     'django_filters',
+    'drf_yasg',
 ]
 REST_FRAMEWORK = {}
 MIDDLEWARE = [
