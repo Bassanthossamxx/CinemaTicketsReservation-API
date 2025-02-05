@@ -3,15 +3,18 @@ from django.http import JsonResponse
 from django.shortcuts import render
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from rest_framework import status
+from rest_framework import status , generics , mixins , viewsets
 from .models import *
 from .serializers import GuestSerializer, MovieSerializer, ReservationSerializer
 from rest_framework.views import APIView
 from django.http import Http404
 from rest_framework.exceptions import NotFound
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.filters import SearchFilter
 
 
 
+# 0.1 - how to do json without rest_framework
 def FBV_Model_No_Rest():
     guest = Guest.objects.all()
     response = {
@@ -130,18 +133,6 @@ def FBV_PK_Reservation(request,pk):
         reservation.delete()
         return Response({"message":"reservation Has Been Deleted"} , status = status.HTTP_200_OK)
 
-#7- GET "PK"  For Filtering Reservations Of Same movie/guest
-@api_view(['GET'])
-def FBV_Filter(pk):
-    #all reservation with same movie id
-    reservation = Reservation.objects.filter(movie=pk)
-    serializer = ReservationSerializer(reservation , many=True)
-    #same guest reservation
-    # reservation = Reservation.objects.filter(guest=pk)
-    # serializer = ReservationSerializer(reservation, many=True)
-    if not reservation.exists():
-        return Response({"message": "No reservations found"}, status=status.HTTP_404_NOT_FOUND)
-    return Response(serializer.data , status=status.HTTP_200_OK)
 
 # 8 - CBV Class Based Views :
 
@@ -183,7 +174,25 @@ class CBV_PK_Guest(APIView):
         guest.delete()
         return Response({'message': "Guest deleted successfully" } , status=status.HTTP_200_OK)
 
+# 9- ViewSets :
 
+# 9.1- viewSet for guest:
+class GuestViewSet(viewsets.ModelViewSet):
+     queryset = Guest.objects.all()
+     serializer_class = GuestSerializer
+
+# 9.2- viewSet for Movie:
+class MovieViewSet(viewsets.ModelViewSet):
+    queryset = Movie.objects.all()
+    serializer_class = MovieSerializer
+
+# 9.3 - viewSet For Reservation :
+class ReservationViewSet(viewsets.ModelViewSet):
+    queryset = Reservation.objects.all()
+    serializer_class = ReservationSerializer
+    filter_backends = [DjangoFilterBackend , SearchFilter]
+    filterset_fields = ['movie__title']  # Add this to filter by the movie title
+    search_fields = ['movie__title'] # add search with movie title
 
 
 
