@@ -1,5 +1,4 @@
 from http.client import responses
-
 from django.http import JsonResponse
 from django.shortcuts import render
 from rest_framework.decorators import api_view
@@ -7,6 +6,10 @@ from rest_framework.response import Response
 from rest_framework import status
 from .models import *
 from .serializers import GuestSerializer, MovieSerializer, ReservationSerializer
+from rest_framework.views import APIView
+from django.http import Http404
+from rest_framework.exceptions import NotFound
+
 
 
 def FBV_Model_No_Rest():
@@ -91,9 +94,9 @@ def FBV_PK_Guest(request, pk):
 @api_view(['GET', 'PUT', 'DELETE'])
 def FBV_PK_Movie(request,pk):
     try:
-       movie = Movie.objects.get(pk=pk)
+        movie = Movie.objects.get(pk=pk)
     except Movie.DoesNotExist:
-       return Response(status=status.HTTP_404_NOT_FOUND)
+        return Response(status=status.HTTP_404_NOT_FOUND)
     if request.method == 'GET':
         serializer = MovieSerializer(movie)
         return Response(serializer.data ,status = status.HTTP_200_OK)
@@ -111,9 +114,9 @@ def FBV_PK_Movie(request,pk):
 @api_view(['GET', 'PUT', 'DELETE'])
 def FBV_PK_Reservation(request,pk):
     try:
-       reservation = Reservation.objects.get(pk=pk)
+        reservation = Reservation.objects.get(pk=pk)
     except Reservation.DoesNotExist:
-       return Response(status=status.HTTP_404_NOT_FOUND)
+        return Response(status=status.HTTP_404_NOT_FOUND)
     if request.method == 'GET':
         serializer = ReservationSerializer(reservation)
         return Response(serializer.data ,status = status.HTTP_200_OK)
@@ -130,14 +133,57 @@ def FBV_PK_Reservation(request,pk):
 #7- GET "PK"  For Filtering Reservations Of Same movie/guest
 @api_view(['GET'])
 def FBV_Filter(pk):
-  #all reservation with same movie id
-  reservation = Reservation.objects.filter(movie=pk)
-  serializer = ReservationSerializer(reservation , many=True)
-  #same guest reservation
-  # reservation = Reservation.objects.filter(guest=pk)
-  # serializer = ReservationSerializer(reservation, many=True)
-  if not reservation.exists():
-      return Response({"message": "No reservations found"}, status=status.HTTP_404_NOT_FOUND)
-  return Response(serializer.data , status=status.HTTP_200_OK)
+    #all reservation with same movie id
+    reservation = Reservation.objects.filter(movie=pk)
+    serializer = ReservationSerializer(reservation , many=True)
+    #same guest reservation
+    # reservation = Reservation.objects.filter(guest=pk)
+    # serializer = ReservationSerializer(reservation, many=True)
+    if not reservation.exists():
+        return Response({"message": "No reservations found"}, status=status.HTTP_404_NOT_FOUND)
+    return Response(serializer.data , status=status.HTTP_200_OK)
+
+# 8 - CBV Class Based Views :
+
+# 8.1 -Guests List And Create "GET , POST":
+class CBV_List_Guest(APIView):
+    def get(self, request):
+        guests = Guest.objects.all()
+        serializer = GuestSerializer(guests, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def post(self, request):
+        serializer = GuestSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+# 8.2 -Guest with PK "get , Put , Delete":
+class CBV_PK_Guest(APIView):
+    def get_object(self , pk):
+        try:
+            guest = Guest.objects.get(pk=pk)
+            return guest
+        except Guest.DoesNotExist:
+          raise NotFound("Guest not found") #raise an 404 not found as json file
+    def get(self,request,pk):
+        guest = self.get_object(pk)
+        serializer = GuestSerializer(guest)
+        return Response(serializer.data , status=status.HTTP_200_OK)
+    def put(self,request,pk):
+        guest = self.get_object(pk)
+        serializer= GuestSerializer(guest , data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data , status= status.HTTP_200_OK)
+        return Response(serializer.errors , status = status.HTTP_400_BAD_REQUEST)
+    def delete(self,request,pk):
+        guest = self.get_object(pk)
+        guest.delete()
+        return Response({'message': "Guest deleted successfully" } , status=status.HTTP_200_OK)
+
+
+
 
 
