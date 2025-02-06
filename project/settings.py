@@ -41,8 +41,11 @@ INSTALLED_APPS = [
     'tickets',
     'django_filters',
     'drf_yasg',
+    'drf_spectacular',
 ]
-REST_FRAMEWORK = {}
+REST_FRAMEWORK = {
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
